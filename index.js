@@ -2,42 +2,38 @@ const beanifyPlugin = require("beanify-plugin")
 
 
 module.exports = beanifyPlugin((beanify, opts, done) => {
-    beanify.addHook('onRoute', ({ route, log },next) => {
+    beanify.addHook('onRoute', (route) => {
+        const urlSegs = route.url.split('.');
+        const tokens = []
 
-        const urlSegs=route.$options.url.split('.');
-        const paramsTokens=[]
-
-        urlSegs.forEach((seg,idx,arr)=>{
-            if(seg.startsWith(":")){
-                arr[idx]='*'
-                paramsTokens.push({
+        urlSegs.forEach((seg, idx, arr) => {
+            if (seg.startsWith(":")) {
+                arr[idx] = '*'
+                tokens.push({
                     idx,
-                    name:seg.substr(1)
+                    name: seg.substr(1)
                 })
             }
         })
 
-        route.$options.url=urlSegs.join('.')
-        route.$paramsToken=paramsTokens
-
-        next()
+        route.url = urlSegs.join('.')
+        route.$paramsToken = tokens
     })
 
-    beanify.addHook('onHandler',({context,req,log},next)=>{
-        const {$paramsToken}=context;
-        const {fromUrl}=req
-    
+    beanify.addHook('onHandler', (route) => {
+        const {$paramsToken,$req}=route;
+        const {fromUrl}=$req
+
         const urlSegs=fromUrl.split('.')
-        req.params={}
+        $req.params={}
 
         $paramsToken.forEach((tk)=>{
-            req.params[tk.name]=urlSegs[tk.idx]
+            $req.params[tk.name]=urlSegs[tk.idx]
         })
-
-        next()
     })
 
     done()
 }, {
-    name: 'beanify-url'
+    name: 'beanify-url',
+    beanify:'^2.0.2'
 })
