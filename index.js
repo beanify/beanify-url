@@ -1,7 +1,7 @@
 const kRouteRequest = Symbol.for('route.request')
 const kPluginUrl = Symbol('plugin.url')
 
-module.exports = function (beanify, opts, done) {
+module.exports = async function (beanify, opts) {
   beanify.addHook('onRoute', function (route) {
     const segs = route.url.split('.')
     route[kPluginUrl] = []
@@ -31,6 +31,4 @@ module.exports = function (beanify, opts, done) {
       })
     }
   })
-
-  done()
 }
