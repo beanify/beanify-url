@@ -15,3 +15,9 @@ declare module 'beanify' {
     params: Record<string, string>
   }
 }
+
+declare module 'beanify-ajv' {
+  interface AjvRouteOptions {
+    params?: Record<string, unknown>
+  }
+}

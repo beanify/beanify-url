@@ -1,4 +1,5 @@
 const kRouteRequest = Symbol.for('route.request')
+const kBeanifyAjv = Symbol.for('beanify.ajv')
 const kPluginUrl = Symbol('plugin.url')
 
 module.exports = async function (beanify, opts) {
@@ -29,6 +30,24 @@ module.exports = async function (beanify, opts) {
       paths.forEach(path => {
         req.params[path.name] = segs[path.index]
       })
+    }
+
+    const ajv = this.$beanify[kBeanifyAjv]
+    if (!ajv) {
+      return
+    }
+
+    const schema = this.schema || {}
+    if (schema.params) {
+      const verification = ajv.compile(schema.params)
+      if (!verification(req.params)) {
+        const msg = verification.errors
+          .map(e => {
+            return `position: [params] schema path: [${e.schemaPath}] message: ${e.message}`
+          })
+          .join('\n')
+        throw new Error(msg)
+      }
     }
   })
 }
