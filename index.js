@@ -1,39 +1,36 @@
-const beanifyPlugin = require("beanify-plugin")
+const kRouteRequest = Symbol.for('route.request')
+const kPluginUrl = Symbol('plugin.url')
 
+module.exports = function (beanify, opts, done) {
+  beanify.addHook('onRoute', function (route) {
+    const segs = route.url.split('.')
+    route[kPluginUrl] = []
+    route.url = segs
+      .map((seg, idx) => {
+        if (seg.startsWith(':')) {
+          route[kPluginUrl].push({
+            index: idx,
+            name: seg.substr(1)
+          })
+          return '*'
+        }
+        return seg
+      })
+      .join('.')
+  })
 
-module.exports = beanifyPlugin((beanify, opts, done) => {
-    beanify.addHook('onRoute', (route) => {
-        const urlSegs = route.url.split('.');
-        const tokens = []
+  beanify.addHook('onBeforeHandler', function () {
+    const req = this[kRouteRequest]
+    const paths = this[kPluginUrl]
 
-        urlSegs.forEach((seg, idx, arr) => {
-            if (seg.startsWith(":")) {
-                arr[idx] = '*'
-                tokens.push({
-                    idx,
-                    name: seg.substr(1)
-                })
-            }
-        })
+    if (paths.length > 0) {
+      const segs = req.url.split('.')
+      req.params = {}
+      paths.forEach(path => {
+        req.params[path.name] = segs[path.index]
+      })
+    }
+  })
 
-        route.url = urlSegs.join('.')
-        route.$paramsToken = tokens
-    })
-
-    beanify.addHook('onHandler', (route) => {
-        const {$paramsToken,$req}=route;
-        const {fromUrl}=$req
-
-        const urlSegs=fromUrl.split('.')
-        $req.params={}
-
-        $paramsToken.forEach((tk)=>{
-            $req.params[tk.name]=urlSegs[tk.idx]
-        })
-    })
-
-    done()
-}, {
-    name: 'beanify-url',
-    beanify:'^2.0.2'
-})
+  done()
+}

@@ -1,22 +1,5 @@
-# beanify-url
-
-Tool for using `url` as parameter delivery method
-
-```bash
-npm i beanify-url --save
-```
-
-with yarn
-
-```bash
-yarn add beanify-url
-```
-
-## Usage
-
-```javascript
 const Beanify = require('beanify')
-const Url = require('beanify-url')
+const Url = require('./index')
 const beanify = Beanify({})
 
 beanify
@@ -24,6 +7,7 @@ beanify
   .route({
     url: 'math.:action',
     handler (req, rep) {
+      console.log(req.params)
       rep.send(req.params) // { action: 'sub' } { action: 'add' }
     }
   })
@@ -37,8 +21,3 @@ beanify
       url: 'math.add'
     })
   })
-```
-
-## Request Decorators
-
-- `params`: get the parameters passed through `url`
