@@ -1,6 +1,6 @@
 const kRouteRequest = Symbol.for('route.request')
 const kBeanifyAjv = Symbol.for('beanify.ajv')
-const kPluginUrl = Symbol('plugin.url')
+const kPluginUrl = Symbol.for('beanify.plugin.url')
 
 module.exports = async function (beanify, opts) {
   beanify.addHook('onRoute', function (route) {
