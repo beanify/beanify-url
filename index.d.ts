@@ -1,5 +1,5 @@
 import { Beanify } from 'beanify'
-
+import { JSONSchemaType } from 'ajv'
 import { BeanifyUrl } from './types/options'
 
 declare const url: BeanifyUrl
@@ -18,6 +18,6 @@ declare module 'beanify' {
 
 declare module 'beanify-ajv' {
   interface AjvRouteOptions {
-    params?: Record<string, unknown>
+    params?: JSONSchemaType<Record<string, any>, true>
   }
 }
