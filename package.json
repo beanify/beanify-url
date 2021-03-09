@@ -1,6 +1,6 @@
 {
   "name": "beanify-url",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "description": "beanify-plugin beanify-url beanify micro-service",
   "main": "index.js",
   "scripts": {
@@ -20,7 +20,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.9.1",
     "@typescript-eslint/parser": "^4.9.1",
-    "beanify": "^3.0.10",
+    "beanify": "^3.0.15",
     "beanify-ajv": "^3.0.5",
     "eslint": "^7.15.0",
     "eslint-config-standard": "^16.0.2",
